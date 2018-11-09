@@ -224,13 +224,13 @@ module.exports = function scoreTask (options = {}, req = {}) {
     let lastHistoryEntryDate;
 
     if (lastHistoryEntry && lastHistoryEntry.date) {
-      lastHistoryEntryDate = moment(lastHistoryEntry.date).zone(timezoneOffset);
+      lastHistoryEntryDate = moment(lastHistoryEntry.date).utcOffset(timezoneOffset);
       if (lastHistoryEntryDate.hour() < dayStart) lastHistoryEntryDate.subtract(1, 'day');
     }
 
     if (
       lastHistoryEntryDate &&
-      moment().zone(timezoneOffset).isSame(lastHistoryEntryDate, 'day')
+      moment().utcOffset(timezoneOffset).isSame(lastHistoryEntryDate, 'day')
     ) {
       lastHistoryEntry.value = task.value;
       lastHistoryEntry.date = Number(new Date());

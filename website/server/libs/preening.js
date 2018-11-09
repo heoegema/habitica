@@ -5,7 +5,7 @@ import moment from 'moment';
 function _aggregate (history, aggregateBy, timezoneOffset, dayStart) {
   return _.chain(history)
     .groupBy(entry => { // group entries by aggregateBy
-      const entryDate = moment(entry.date).zone(timezoneOffset);
+      const entryDate = moment(entry.date).utcOffset(timezoneOffset);
       if (entryDate.hour() < dayStart) entryDate.subtract(1, 'day');
       return entryDate.format(aggregateBy);
     })
@@ -35,14 +35,14 @@ Subscribers and challenges:
  */
 export function preenHistory (history, isSubscribed, timezoneOffset = 0, dayStart = 0) {
   // history = _.filter(history, historyEntry => Boolean(historyEntry)); // Filter missing entries
-  const now = moment().zone(timezoneOffset);
+  const now = moment().utcOffset(timezoneOffset);
   // Date after which to begin compressing data
   const cutOff = now.subtract(isSubscribed ? 365 : 60, 'days').startOf('day');
 
   // Keep uncompressed entries (modifies history and returns removed items)
   let newHistory = _.remove(history, entry => {
     if (!entry) return true; // sometimes entries are `null`
-    const entryDate = moment(entry.date).zone(timezoneOffset);
+    const entryDate = moment(entry.date).utcOffset(timezoneOffset);
     if (entryDate.hour() < dayStart) entryDate.subtract(1, 'day');
     return entryDate.isSame(cutOff) || entryDate.isAfter(cutOff);
   });
@@ -51,7 +51,7 @@ export function preenHistory (history, isSubscribed, timezoneOffset = 0, dayStar
   let monthsCutOff = cutOff.subtract(isSubscribed ? 12 : 10, 'months').startOf('day');
   let aggregateByMonth = _.remove(history, entry => {
     if (!entry) return true; // sometimes entries are `null`
-    const entryDate = moment(entry.date).zone(timezoneOffset);
+    const entryDate = moment(entry.date).utcOffset(timezoneOffset);
     if (entryDate.hour() < dayStart) entryDate.subtract(1, 'day');
     return entryDate.isSame(monthsCutOff) || entryDate.isAfter(monthsCutOff);
   });
