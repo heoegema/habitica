@@ -69,10 +69,10 @@ describe('taskDefaults', () => {
     // Configure to have a day start that's *always* tomorrow.
     let user = generateUser({'preferences.dayStart': 25});
     let task = taskDefaults({ type: 'daily' }, user);
-
+    console.log('Start Date', task.startDate);
     expect(task.startDate).to.eql(
       moment()
-        .zone(user.preferences.timezoneOffset, 'hour')
+        .utcOffset(user.preferences.timezoneOffset, 'hour')
         .startOf('day')
         .subtract(1, 'day')
         .toDate()
